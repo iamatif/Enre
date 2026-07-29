@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenRegisterModal }) => {
                 />
                 <button
                   type="submit"
-                  className="absolute right-1 top-1 bottom-1 px-3 bg-[#a67c52] text-white hover:brightness-110 transition-all flex items-center justify-center"
+                  className="absolute right-1 top-1 bottom-1 px-3 bg-[#79542e] text-white hover:brightness-110 transition-all flex items-center justify-center"
                   aria-label={t('footer.subscribe')}
                 >
                   <Send className="w-3.5 h-3.5" />
@@ -89,7 +89,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenRegisterModal }) => {
             <div className="pt-2">
               <button
                 onClick={onOpenRegisterModal}
-                className="w-full bg-[#a67c52] text-white py-3 px-6 font-semibold uppercase tracking-[0.2em] hover:brightness-110 transition-all"
+                className="w-full bg-[#79542e] text-white py-3 px-6 font-semibold uppercase tracking-[0.2em] hover:brightness-110 transition-all"
                 style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
               >
                 {t('footer.registerNow')}

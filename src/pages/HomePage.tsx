@@ -470,8 +470,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={idx}
                     onClick={() => setHighlightSlide(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      highlightSlide === idx ? "bg-white w-4" : "bg-white/30"
+                    className={`w-6 h-6 rounded-full transition-all ${
+                      highlightSlide === idx ? "bg-white w-6" : "bg-white/30"
                     }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
@@ -483,8 +483,8 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={idx}
                     onClick={() => setHighlightSlide(idx * 2)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      Math.floor(highlightSlide / 2) === idx ? "bg-white w-4" : "bg-white/30"
+                    className={`w-6 h-6 rounded-full transition-all ${
+                      Math.floor(highlightSlide / 2) === idx ? "bg-white w-6" : "bg-white/30"
                     }`}
                     aria-label={`Go to slide group ${idx + 1}`}
                   />
@@ -590,7 +590,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                className={`w-6 h-6 rounded-full transition-colors ${
                   currentSlide === idx ? "bg-[#79542e]" : "bg-[#d4c4b7]"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
@@ -604,7 +604,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="py-24 bg-[#1b1c1c] overflow-hidden">
         <div className="max-w-[1280px] mx-auto px-6 md:px-16 mb-12">
           <span
-            className="font-semibold text-[#a67c52] uppercase tracking-[0.25em] block mb-2"
+            className="font-semibold text-[#c49a6e] uppercase tracking-[0.25em] block mb-2"
             style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
           >
             {t('home.galleryLabel')}
@@ -680,13 +680,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                 >
                   <div className="flex items-center gap-4">
                     <span
-                      className="font-serif-headline text-[#a67c52] font-bold"
+                      className="font-serif-headline text-[#79542e] font-bold"
                       style={{ fontSize: "clamp(1rem, 0.875rem + 0.5vw, 1.125rem)" }}
                     >
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <h3
-                      className="font-serif-headline text-[#1b1c1c] group-hover:text-[#a67c52] transition-colors"
+                      className="font-serif-headline text-[#1b1c1c] group-hover:text-[#79542e] transition-colors"
                       style={{ fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)" }}
                     >
                       {t(nameKey)}
@@ -892,10 +892,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-semibold uppercase text-[#79542e] tracking-widest">
+                <label htmlFor="city" className="text-[10px] font-semibold uppercase text-[#79542e] tracking-widest">
                   {t('home.contactCityLabel')}
                 </label>
                 <select
+                  id="city"
                   name="city"
                   required
                   className="w-full bg-[#f5f3f3] border-b border-[#d4c4b7] focus:border-[#79542e] outline-none py-2.5 px-3 text-[#1b1c1c] appearance-none cursor-pointer"
@@ -915,10 +916,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-semibold uppercase text-[#79542e] tracking-widest">
+                <label htmlFor="reason" className="text-[10px] font-semibold uppercase text-[#79542e] tracking-widest">
                   {t('home.contactReasonLabel')}
                 </label>
                 <select
+                  id="reason"
                   name="reason"
                   required
                   className="w-full bg-[#f5f3f3] border-b border-[#d4c4b7] focus:border-[#79542e] outline-none py-2.5 px-3 text-[#1b1c1c] appearance-none cursor-pointer"
@@ -975,7 +977,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-[#a67c52] text-white py-4 font-semibold uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-md disabled:opacity-60"
+                className="w-full bg-[#79542e] text-white py-4 font-semibold uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-md disabled:opacity-60"
                 style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
               >
                 {submitting ? t('home.contactSending') : t('home.contactRegister')}

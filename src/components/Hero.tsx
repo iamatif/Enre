@@ -51,7 +51,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegisterModal }) => {
         <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={onOpenRegisterModal}
-            className="bg-[#a67c52] text-white px-6 sm:px-10 py-3 sm:py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
+            className="bg-[#79542e] text-white px-6 sm:px-10 py-3 sm:py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
           >
             {t('hero.register')}
           </button>

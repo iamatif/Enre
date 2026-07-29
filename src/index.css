@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'EB Garamond', serif;
+    --font-sans: 'Montserrat', sans-serif;
+    --font-arabic: 'Cairo', 'Noto Naskh Arabic', sans-serif;
+    --font-serif-arabic: 'Noto Naskh Arabic', 'EB Garamond', serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #fbf9f8;
+    color: #1b1c1c;
+    overflow-x: hidden;
+  }
+
+  [dir="rtl"] body,
+  [dir="rtl"] {
+    font-family: var(--font-arabic);
+  }
+
+  h1, h2, h3, h4, .font-serif-headline {
+    font-family: var(--font-serif) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+  }
+
+  [dir="rtl"] h1,
+  [dir="rtl"] h2,
+  [dir="rtl"] h3,
+  [dir="rtl"] h4,
+  [dir="rtl"] .font-serif-headline {
+    font-family: var(--font-serif-arabic) !important;
+    text-transform: uppercase !important;
+  }
+}
+
+/* Custom scrollbar and animations */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-indicator {
+  width: 24px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  position: relative;
+}
+
+.scroll-indicator::before {
+  content: '';
+  width: 4px;
+  height: 8px;
+  background: white;
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  animation: scroll-anim 2s infinite;
+}
+
+@keyframes scroll-anim {
+  0% { opacity: 0; transform: translate(-50%, 0); }
+  30% { opacity: 1; transform: translate(-50%, 8px); }
+  100% { opacity: 0; transform: translate(-50%, 16px); }
+}
+
+
+.glass-nav {
+  background: rgba(251, 249, 248, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.font-body {
+  font-family: var(--font-sans) !important;
+}
+
+.font-arabic {
+  font-family: var(--font-arabic) !important;
+}
+
+.font-serif-arabic {
+  font-family: var(--font-serif-arabic) !important;
+}
+
+[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-right: auto;
+  margin-left: unset;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-left: auto;
+  margin-right: unset;
+}
+
+[dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+.highlights-track {
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(calc(-100% * var(--hl-slide)));
+}
+
+.slider-track {
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(calc(-100% * var(--slide)));
+}
+
+/* Phone Input Styles */
+.PhoneInput {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #d4c4b7;
+  background: #f5f3f3;
+  transition: border-color 0.2s;
+}
+
+.PhoneInput:focus-within {
+  border-bottom-color: #79542e;
+}
+
+.PhoneInputCountry {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-right: 1px solid #d4c4b7;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  background: #f5f3f3;
+}
+
+.PhoneInputCountry:hover {
+  background: #ede9e5;
+}
+
+.PhoneInputCountrySelect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+}
+
+.PhoneInputCountryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.PhoneInputCountryIcon img {
+  width: 22px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.PhoneInputCountryIconUnicode {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.PhoneInputInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0.625rem 0.75rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #1b1c1c;
+  font-size: clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem);
+  font-family: var(--font-sans);
+}
+
+.PhoneInputInput::placeholder {
+  color: #9ca3af;
+}
+
+.PhoneInputCountrySelectArrow {
+  margin-left: 4px;
+  color: #5f5e5e;
+  font-size: 10px;
+}
+

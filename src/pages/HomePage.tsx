@@ -470,11 +470,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={idx}
                     onClick={() => setHighlightSlide(idx)}
-                    className={`w-6 h-6 rounded-full transition-all ${
-                      highlightSlide === idx ? "bg-white w-6" : "bg-white/30"
-                    }`}
+                    className="p-2 rounded-full transition-all"
                     aria-label={`Go to slide ${idx + 1}`}
-                  />
+                  >
+                    <span className={`block w-2 h-2 rounded-full transition-all ${
+                      highlightSlide === idx ? "bg-white w-4" : "bg-white/30"
+                    }`} />
+                  </button>
                 ))}
               </div>
               {/* Tablet dots */}
@@ -483,11 +485,13 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <button
                     key={idx}
                     onClick={() => setHighlightSlide(idx * 2)}
-                    className={`w-6 h-6 rounded-full transition-all ${
-                      Math.floor(highlightSlide / 2) === idx ? "bg-white w-6" : "bg-white/30"
-                    }`}
+                    className="p-2 rounded-full transition-all"
                     aria-label={`Go to slide group ${idx + 1}`}
-                  />
+                  >
+                    <span className={`block w-2 h-2 rounded-full transition-all ${
+                      Math.floor(highlightSlide / 2) === idx ? "bg-white w-4" : "bg-white/30"
+                    }`} />
+                  </button>
                 ))}
               </div>
             </div>
@@ -590,11 +594,13 @@ export const HomePage: React.FC<HomePageProps> = ({
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
-                className={`w-6 h-6 rounded-full transition-colors ${
-                  currentSlide === idx ? "bg-[#79542e]" : "bg-[#d4c4b7]"
-                }`}
+                className="p-2 rounded-full transition-colors"
                 aria-label={`Go to slide ${idx + 1}`}
-              />
+              >
+                <span className={`block w-2.5 h-2.5 rounded-full transition-colors ${
+                  currentSlide === idx ? "bg-[#79542e]" : "bg-[#d4c4b7]"
+                }`} />
+              </button>
             ))}
           </div>
         </div>

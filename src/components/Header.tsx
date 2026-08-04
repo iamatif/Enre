@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Globe, Menu, X, ChevronDown, PhoneCall } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import logoWhite from '../../assets/logo-white.png';
 
 interface HeaderProps {
   onOpenRegisterModal: () => void;
 }
+
+const CALENDLY_URL = '#';
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenRegisterModal,
@@ -55,9 +58,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-10">
           <Link
             to={lang === 'AR' ? '/ar' : '/'}
-            className="font-serif-headline text-white tracking-[0.2em] uppercase font-semibold hover:opacity-90 transition-opacity" style={{ fontSize: 'clamp(1.25rem, 1rem + 1vw, 1.5rem)' }}
+            className="flex items-center hover:opacity-90 transition-opacity leading-tight"
           >
-            THE CANOPIES
+            <img
+              src={logoWhite}
+              alt="Imtiaz Logo"
+              className={`h-8 md:h-10 w-auto transition-all duration-500 ${
+                isScrolled ? 'md:h-8' : ''
+              }`}
+            />
           </Link>
 
           {/* Desktop Nav - hidden on homepage */}
@@ -124,13 +133,15 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Register Interest CTA Button */}
-          <button
-            onClick={onOpenRegisterModal}
+          {/* Book Appointment CTA Button */}
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden sm:block border border-white bg-transparent text-white px-6 py-2.5 font-semibold hover:bg-white hover:text-black transition-all uppercase tracking-[0.15em] shadow-sm active:opacity-90" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
           >
-            {t('nav.registerNow')}
-          </button>
+            {t('nav.bookAppointment')}
+          </a>
 
           {/* Mobile Menu Button - hidden on homepage */}
           {!isHome && (
@@ -174,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
               {t('nav.registerNow')}
             </button>
             <a
-              href="tel:+97180025327"
+              href="tel:+971557969234"
               className="flex items-center justify-center gap-2 border border-white text-white py-2.5 font-semibold uppercase tracking-widest text-center hover:bg-white/10" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
             >
               <PhoneCall className="w-4 h-4" />

@@ -1,12 +1,17 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import heroBanner from '../../assets/canopies_banner_story_desktop.webp';
+import brochurePdf from '../../assets/Enre Residence by Imtiaz-Brochure.pdf';
+import floorPlanPdf from '../../assets/Enre Residence by Imtiaz - Floor Plan .pdf';
+import paymentPlanPdf from '../../assets/IMTIAZ_Enre Residence-Payment plan.pdf';
+
+const CALENDLY_URL = '#';
 
 interface HeroProps {
   onOpenRegisterModal: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenRegisterModal }) => {
+export const Hero: React.FC<HeroProps> = () => {
   const { t } = useLanguage();
   const scrollToAbout = () => {
     const el = document.getElementById('about');
@@ -40,21 +45,29 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegisterModal }) => {
           {t('hero.headline')}
         </h1>
 
-        <p className="text-white/90  mt-4 sm:mt-6 font-semibold capitalize" style={{ fontSize: 'clamp(1.25rem, 1rem + 1vw, 1.5rem)' }}>
+        <p className="text-white/90  mt-4 sm:mt-6 font-semibold" style={{ fontSize: 'clamp(1.25rem, 1rem + 1vw, 1.5rem)' }}>
           {t('hero.subtitle')}
         </p>
 
-        <p className="text-white/80 mt-3 sm:mt-4 max-w-xl font-normal leading-relaxed px-2" style={{ fontSize: 'clamp(0.875rem, 0.8125rem + 0.25vw, 1rem)' }}>
+        <p className="text-white/80 mt-3 sm:mt-4 max-w-2xl font-normal leading-relaxed px-2" style={{ fontSize: 'clamp(0.875rem, 0.8125rem + 0.25vw, 1rem)' }}>
           {t('hero.tagline')}
         </p>
 
-        <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <button
-            onClick={onOpenRegisterModal}
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <a
+            href={brochurePdf}
+            download="Enre-Residence-Brochure.pdf"
             className="bg-[#79542e] text-white px-6 sm:px-10 py-3 sm:py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
           >
-            {t('hero.register')}
-          </button>
+            {t('hero.downloadBrochure')}
+          </a>
+          <a
+            href={floorPlanPdf}
+            download="Enre-Residence-Floor-Plan.pdf"
+            className="border border-white text-white px-6 sm:px-10 py-3 sm:py-4 font-semibold hover:bg-white hover:text-black transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
+          >
+            {t('hero.downloadFloorPlan')}
+          </a>
         </div>
 
         {/* Scroll Down Indicator */}

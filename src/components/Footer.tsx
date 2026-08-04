@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import logoWhite from '../../assets/logo-white.png';
 
 interface FooterProps {
   onOpenRegisterModal: () => void;
@@ -26,12 +27,21 @@ export const Footer: React.FC<FooterProps> = ({ onOpenRegisterModal }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-16 border-b border-white/10">
           {/* Brand Column */}
           <div className="lg:col-span-6 space-y-6">
-            <span className="font-serif-headline text-white tracking-[0.25em] block uppercase font-bold" style={{ fontSize: 'clamp(1.5rem, 1.125rem + 1.5vw, 1.875rem)' }}>
-              THE CANOPIES
-            </span>
-            <p className="text-white/70 leading-relaxed max-w-sm" style={{ fontSize: 'clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)' }}>
-              {t('footer.brandDesc')}
-            </p>
+            <div>
+              <img
+                src={logoWhite}
+                alt="Imtiaz Logo"
+                className="h-14 w-auto"
+              />
+            </div>
+            <div>
+              <h3 className="uppercase tracking-[0.2em] font-semibold text-[#a67c52]" style={{ fontSize: 'clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)' }}>
+                {t('footer.brandTagline')}
+              </h3>
+              <p className="text-white/70 leading-relaxed max-w-sm mt-3" style={{ fontSize: 'clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)' }}>
+                {t('footer.brandDesc')}
+              </p>
+            </div>
             <div className="pt-2 flex flex-col gap-3 text-white/80" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-[#a67c52]" />
@@ -39,7 +49,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenRegisterModal }) => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#a67c52]" />
-                <a href="tel:+97180025327" className="hover:text-[#a67c52] transition-colors">
+                <a href="tel:+971557969234" className="hover:text-[#a67c52] transition-colors">
                   {t('footer.phone')}
                 </a>
               </div>

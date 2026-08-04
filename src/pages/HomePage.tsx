@@ -9,28 +9,54 @@ import {
   ChevronRight,
   CheckCircle2,
   Shield,
+  Check,
+  Calendar,
+  Dumbbell,
+  Waves,
+  Baby,
+  Users,
+  ShowerHead,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import keyHighlightsBg from "../../assets/key0highlights.webp";
-import icon1 from "../../assets/canopies_highlights_icon_1.webp";
-import icon2 from "../../assets/canopies_highlights_icon_2.webp";
-import icon3 from "../../assets/canopies_highlights_icon_3.webp";
-import icon4 from "../../assets/canopies_highlights_icon_4.webp";
-import icon5 from "../../assets/canopies_highlights_icon_5.webp";
-import icon6 from "../../assets/canopies_highlights_icon_6.webp";
-import icon7 from "../../assets/canopies_highlights_icon_7.webp";
-import icon8 from "../../assets/canopies_highlights_icon_8.webp";
-import gallery1 from "../../assets/gallery/canopies_gallery_slide_1.webp";
-import gallery2 from "../../assets/gallery/canopies_gallery_slide_2.webp";
-import gallery3 from "../../assets/gallery/canopies_gallery_slide_3.webp";
-import gallery4 from "../../assets/gallery/canopies_gallery_slide_4.webp";
-import gallery5 from "../../assets/gallery/canopies_gallery_slide_5.webp";
-import gallery6 from "../../assets/gallery/canopies_gallery_slide_6.webp";
-import gallery7 from "../../assets/gallery/canopies_gallery_slide_7.webp";
-import gallery8 from "../../assets/gallery/canopies_gallery_slide_8.webp";
-import gallery9 from "../../assets/gallery/canopies_gallery_slide_9.webp";
+import paymentPlanPdf from "../../assets/IMTIAZ_Enre Residence-Payment plan.pdf";
+const collectImages = (glob: Record<string, string>): string[] =>
+  Object.keys(glob)
+    .sort()
+    .map((key) => glob[key]);
+
+const galleryExterior = collectImages(
+  import.meta.glob("/assets/gallery/optimized/exterior/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
+const galleryApartments = collectImages(
+  import.meta.glob("/assets/gallery/optimized/apartment/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
+const galleryClubHouse = collectImages(
+  import.meta.glob("/assets/gallery/optimized/club-house/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
+const galleryGym = collectImages(
+  import.meta.glob("/assets/gallery/optimized/gym/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
+const galleryLobby = collectImages(
+  import.meta.glob("/assets/gallery/optimized/lobby/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
 
 interface HomePageProps {
   onOpenRegisterModal: () => void;
@@ -39,9 +65,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({
   onOpenRegisterModal,
 }) => {
-  const [selectedGalleryImage, setSelectedGalleryImage] = useState<
-    string | null
-  >(null);
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [highlightSlide, setHighlightSlide] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -51,6 +75,39 @@ export const HomePage: React.FC<HomePageProps> = ({
   const formRef = useRef<HTMLFormElement>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [galleryTab, setGalleryTab] = useState<'exterior' | 'interior'>('exterior');
+  const [interiorTab, setInteriorTab] = useState<'apartments' | 'clubHouse' | 'gym' | 'lobby'>('apartments');
+
+  const interiorGalleryTabs = [
+    { key: 'apartments' as const, labelKey: 'home.gallerySubApartments' },
+    { key: 'clubHouse' as const, labelKey: 'home.gallerySubClubHouse' },
+    { key: 'gym' as const, labelKey: 'home.gallerySubGym' },
+    { key: 'lobby' as const, labelKey: 'home.gallerySubLobby' },
+  ];
+
+  const galleryImagesByInterior: Record<
+    'apartments' | 'clubHouse' | 'gym' | 'lobby',
+    string[]
+  > = {
+    apartments: galleryApartments,
+    clubHouse: galleryClubHouse,
+    gym: galleryGym,
+    lobby: galleryLobby,
+  };
+
+  const activeGalleryImages =
+    galleryTab === 'exterior' ? galleryExterior : galleryImagesByInterior[interiorTab];
+
+  const scrollToContact = () => {
+    const el = document.getElementById('contact');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const paymentPlanSteps = [
+    { valueKey: 'home.paymentPlanStep1Value', labelKey: 'home.paymentPlanStep1Label' },
+    { valueKey: 'home.paymentPlanStep2Value', labelKey: 'home.paymentPlanStep2Label' },
+    { valueKey: 'home.paymentPlanStep3Value', labelKey: 'home.paymentPlanStep3Label' },
+  ];
 
   const sliderSlides = [
     {
@@ -62,7 +119,6 @@ export const HomePage: React.FC<HomePageProps> = ({
       taglineKey: 'home.slideTagline2',
       headingKey: 'home.slideHeading2',
       descKey: 'home.slideDesc2',
-      placesKey: 'home.slidePlaces2',
     },
     {
       taglineKey: 'home.slideTagline3',
@@ -72,14 +128,11 @@ export const HomePage: React.FC<HomePageProps> = ({
   ];
 
   const highlights = [
-    { icon: icon1, alt: t('home.highlight1'), key: 'home.highlight1', wide: true },
-    { icon: icon2, alt: t('home.highlight2'), key: 'home.highlight2', wide: false },
-    { icon: icon3, alt: t('home.highlight3'), key: 'home.highlight3', wide: false },
-    { icon: icon4, alt: t('home.highlight4'), key: 'home.highlight4', wide: false },
-    { icon: icon5, alt: t('home.highlight5'), key: 'home.highlight5', wide: false },
-    { icon: icon6, alt: t('home.highlight6'), key: 'home.highlight6', wide: false },
-    { icon: icon7, alt: t('home.highlight7'), key: 'home.highlight7', wide: false },
-    { icon: icon8, alt: t('home.highlight8'), key: 'home.highlight8', wide: false },
+    { icon: Dumbbell, titleKey: 'home.highlight1Title', descKey: 'home.highlight1Desc' },
+    { icon: Waves, titleKey: 'home.highlight2Title', descKey: 'home.highlight2Desc' },
+    { icon: Baby, titleKey: 'home.highlight3Title', descKey: 'home.highlight3Desc' },
+    { icon: Users, titleKey: 'home.highlight4Title', descKey: 'home.highlight4Desc' },
+    { icon: ShowerHead, titleKey: 'home.highlight5Title', descKey: 'home.highlight5Desc' },
   ];
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -171,17 +224,16 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   useEffect(() => {
     const el = galleryRef.current;
-    if (!el) return;
+    if (!el || activeGalleryImages.length === 0) return;
+    galleryOffsetRef.current = 0;
     const speed = 1.2;
     let lastTime = performance.now();
 
     const animate = (now: number) => {
       if (!galleryPausedRef.current) {
         galleryOffsetRef.current += speed * (now - lastTime) / 16;
-        const first = el.children[0] as HTMLElement | undefined;
-        const mid = el.children[9] as HTMLElement | undefined;
-        const copyWidth = first && mid ? mid.offsetLeft - first.offsetLeft : el.scrollWidth / 2;
-        if (galleryOffsetRef.current >= copyWidth) {
+        const copyWidth = el.scrollWidth / 2;
+        if (copyWidth > 0 && galleryOffsetRef.current >= copyWidth) {
           galleryOffsetRef.current = 0;
         }
         el.style.transform = `translate3d(${-galleryOffsetRef.current}px, 0, 0)`;
@@ -192,13 +244,38 @@ export const HomePage: React.FC<HomePageProps> = ({
 
     galleryAnimRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(galleryAnimRef.current);
-  }, []);
+  }, [activeGalleryImages]);
+
+  const handleGalleryPrev = useCallback(() => {
+    setSelectedGalleryIndex((prev) => {
+      if (prev === null || activeGalleryImages.length === 0) return prev;
+      return (prev - 1 + activeGalleryImages.length) % activeGalleryImages.length;
+    });
+  }, [activeGalleryImages.length]);
+
+  const handleGalleryNext = useCallback(() => {
+    setSelectedGalleryIndex((prev) => {
+      if (prev === null || activeGalleryImages.length === 0) return prev;
+      return (prev + 1) % activeGalleryImages.length;
+    });
+  }, [activeGalleryImages.length]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (selectedGalleryIndex === null) return;
+      if (e.key === 'Escape') setSelectedGalleryIndex(null);
+      if (e.key === 'ArrowLeft') handleGalleryPrev();
+      if (e.key === 'ArrowRight') handleGalleryNext();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedGalleryIndex, handleGalleryPrev, handleGalleryNext]);
 
   return (
     <div className="min-h-screen">
       <Hero onOpenRegisterModal={onOpenRegisterModal} />
 
-      {/* About Us / Philosophy Section */}
+      {/* About Project Section */}
       <section id="about" className="py-24 md:py-36 px-6 md:px-16 bg-[#f5f3f3]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <span
@@ -207,154 +284,94 @@ export const HomePage: React.FC<HomePageProps> = ({
               fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
             }}
           >
-            {t('home.philosophyLabel')}
+            {t('home.aboutProjectLabel')}
           </span>
           <h2
             className="font-serif-headline text-[#79542e]"
             style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
           >
-            {t('home.philosophyTitle')}
+            {t('home.aboutProjectTitle')}
           </h2>
           <div
             className="space-y-6 text-[#5f5e5e] font-normal leading-relaxed"
             style={{ fontSize: "clamp(1rem, 0.875rem + 0.5vw, 1.125rem)" }}
           >
-            <p dangerouslySetInnerHTML={{ __html: t('home.philosophyDesc1') }} />
-            <p dangerouslySetInnerHTML={{ __html: t('home.philosophyDesc2') }} />
+            <p>{t('home.aboutProjectDesc1')}</p>
+            <p>{t('home.aboutProjectDesc2')}</p>
           </div>
           <div className="pt-8">
-            <button
-              onClick={onOpenRegisterModal}
-              className="inline-block border border-[#1b1c1c] px-10 py-4 font-semibold text-[#1b1c1c] hover:bg-[#1b1c1c] hover:text-white transition-all uppercase tracking-[0.2em]"
+            <a
+              href={paymentPlanPdf}
+              download="Enre-Residence-Payment-Plan.pdf"
+              className="inline-block bg-[#79542e] text-white px-10 py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95"
               style={{
                 fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
               }}
             >
-              {t('home.contactRegister')}
-            </button>
+              {t('hero.downloadPaymentPlan')}
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Exclusivity Defined (6 Points) */}
-      <section className="py-24 bg-white px-6 md:px-16 border-y border-[#e4e2e2]">
+      {/* Flexible Payment Plan Section */}
+      <section className="py-20 md:py-24 px-6 md:px-16">
         <div className="max-w-[1280px] mx-auto">
-          <div className="mb-16 text-center">
+          <div className="text-center">
             <span
               className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-2"
-              style={{
-                fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-              }}
+              style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
             >
-              {t('home.exclusivityTitle')}
+              {t('home.paymentPlanSectionLabel')}
             </span>
-            <h2
+            <h3
               className="font-serif-headline text-[#1b1c1c]"
-              style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
+              style={{ fontSize: "clamp(1.5rem, 1.125rem + 1.5vw, 2rem)" }}
             >
-              {t('home.propertyDetailsTitle')}
-            </h2>
-          </div>
+              {t('home.paymentPlanHeading')}
+            </h3>
+            <p
+              className="text-[#5f5e5e] mt-3 max-w-2xl mx-auto leading-relaxed"
+              style={{ fontSize: "clamp(0.875rem, 0.8125rem + 0.25vw, 1rem)" }}
+            >
+              {t('home.paymentPlanSubheading')}
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-12">
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
-              >
-                {t('home.estimatedHandover')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-              >
-                {t('home.estimatedHandoverValue')}
-              </span>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+              {paymentPlanSteps.map((step, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-[#1b1c1c] text-white flex items-center justify-center">
+                    <Check className="w-6 h-6" />
+                  </div>
+                  <span
+                    className="font-serif-headline text-[#79542e] font-bold"
+                    style={{ fontSize: "clamp(1.75rem, 1.5rem + 0.75vw, 2.25rem)" }}
+                  >
+                    {t(step.valueKey)}
+                  </span>
+                  <p
+                    className="text-[#5f5e5e] font-semibold uppercase tracking-wider"
+                    style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+                  >
+                    {t(step.labelKey)}
+                  </p>
+                </div>
+              ))}
             </div>
 
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
-              >
-                {t('home.pricesStartFrom')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-              >
-                {t('home.pricesStartFromValue')}
-              </span>
+            <div className="mt-12 flex items-center justify-center gap-2 text-[#1b1c1c] font-semibold uppercase tracking-widest" style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}>
+              <Calendar className="w-4 h-4 text-[#79542e]" />
+              <span>{t('home.paymentPlanHandover')}</span>
             </div>
 
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
+            <div className="mt-8">
+              <button
+                onClick={scrollToContact}
+                className="inline-block bg-[#79542e] text-white px-10 py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95"
+                style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
               >
-                {t('home.averageSize')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-              >
-                {t('home.averageSizeValue')}
-              </span>
-            </div>
-
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
-              >
-                {t('home.totalUnits')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-              >
-                {t('home.totalUnitsValue')}
-              </span>
-            </div>
-
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
-              >
-                {t('home.typeOfUnits')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-                dangerouslySetInnerHTML={{ __html: t('home.typeOfUnitsValue') }}
-              />
-            </div>
-
-            <div className="space-y-3 text-center">
-              <h3
-                className="font-serif-headline text-[#1b1c1c]"
-                style={{
-                  fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)",
-                }}
-              >
-                {t('home.paymentPlan')}
-              </h3>
-              <span
-                className="font-serif-headline text-[#79542e] font-bold block"
-                style={{ fontSize: "clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem)" }}
-                dangerouslySetInnerHTML={{ __html: t('home.paymentPlanValue') }}
-              />
+                {t('home.paymentPlanCta')}
+              </button>
             </div>
           </div>
         </div>
@@ -391,17 +408,24 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           {/* Desktop grid */}
-          <div className="hidden lg:grid grid-cols-4 gap-x-6 gap-y-12 text-center">
+          <div className="hidden lg:grid grid-cols-5 gap-x-8 gap-y-12 text-center">
             {highlights.map((item, idx) => (
               <div key={idx} className="flex flex-col items-center">
-                <div className={`${item.wide ? 'w-34' : 'w-14'} h-14 mb-4 overflow-hidden`}>
-                  <img src={item.icon} alt={item.alt} className="w-full h-full object-contain" />
+                <div className="w-16 h-16 mb-4 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-[#c49a6e]">
+                  <item.icon className="w-7 h-7" />
                 </div>
                 <p
-                  className="text-white"
-                  style={{ fontSize: "clamp(0.875rem, 0.75rem + 0.5vw, 1rem)" }}
-                  dangerouslySetInnerHTML={{ __html: t(item.key) }}
-                />
+                  className="text-white font-semibold uppercase tracking-widest mb-2"
+                  style={{ fontSize: "clamp(0.75rem, 0.6875rem + 0.25vw, 0.875rem)" }}
+                >
+                  {t(item.titleKey)}
+                </p>
+                <p
+                  className="text-white/70 leading-relaxed"
+                  style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+                >
+                  {t(item.descKey)}
+                </p>
               </div>
             ))}
           </div>
@@ -424,14 +448,21 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {highlights.map((item, idx) => (
                   <div key={idx} className="w-full md:w-1/2 flex-shrink-0 px-6 md:px-8">
                     <div className="flex flex-col items-center">
-                      <div className={`${item.wide ? 'w-34' : 'w-14'} h-14 mb-4 overflow-hidden`}>
-                        <img src={item.icon} alt={item.alt} className="w-full h-full object-contain" />
+                      <div className="w-16 h-16 mb-4 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-[#c49a6e]">
+                        <item.icon className="w-7 h-7" />
                       </div>
                       <p
-                        className="text-white text-center"
-                        style={{ fontSize: "clamp(0.875rem, 0.75rem + 0.5vw, 1rem)" }}
-                        dangerouslySetInnerHTML={{ __html: t(item.key) }}
-                      />
+                        className="text-white font-semibold uppercase tracking-widest mb-2 text-center"
+                        style={{ fontSize: "clamp(0.75rem, 0.6875rem + 0.25vw, 0.875rem)" }}
+                      >
+                        {t(item.titleKey)}
+                      </p>
+                      <p
+                        className="text-white/70 leading-relaxed text-center"
+                        style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+                      >
+                        {t(item.descKey)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -565,14 +596,6 @@ export const HomePage: React.FC<HomePageProps> = ({
                       >
                         {t(slide.descKey)}
                       </p>
-                      {slide.placesKey && (
-                        <p
-                          className="text-[#79542e] font-semibold leading-relaxed max-w-lg"
-                          style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
-                        >
-                          {t(slide.placesKey)}
-                        </p>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -608,7 +631,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Gallery Section */}
       <section className="py-24 bg-[#1b1c1c] overflow-hidden">
-        <div className="max-w-[1280px] mx-auto px-6 md:px-16 mb-12">
+        <div className="max-w-[1280px] mx-auto px-6 md:px-16 mb-12 text-center">
           <span
             className="font-semibold text-[#c49a6e] uppercase tracking-[0.25em] block mb-2"
             style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
@@ -621,7 +644,53 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             {t('home.galleryTitle')}
           </h2>
-          <div className="w-16 h-1 bg-[#a67c52] mt-4" />
+          <div className="w-16 h-1 bg-[#a67c52] mx-auto mt-4" />
+
+          {/* Main tabs */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => setGalleryTab('exterior')}
+              className={`px-7 py-3 border uppercase tracking-[0.2em] font-semibold transition-all ${
+                galleryTab === 'exterior'
+                  ? 'bg-[#a67c52] border-[#a67c52] text-white'
+                  : 'border-white/20 text-white/60 hover:text-white hover:border-white/50'
+              }`}
+              style={{ fontSize: "clamp(0.625rem, 0.5625rem + 0.2vw, 0.6875rem)" }}
+            >
+              {t('home.galleryTabExterior')}
+            </button>
+            <button
+              onClick={() => setGalleryTab('interior')}
+              className={`px-7 py-3 border uppercase tracking-[0.2em] font-semibold transition-all ${
+                galleryTab === 'interior'
+                  ? 'bg-[#a67c52] border-[#a67c52] text-white'
+                  : 'border-white/20 text-white/60 hover:text-white hover:border-white/50'
+              }`}
+              style={{ fontSize: "clamp(0.625rem, 0.5625rem + 0.2vw, 0.6875rem)" }}
+            >
+              {t('home.galleryTabInterior')}
+            </button>
+          </div>
+
+          {/* Interior sub-tabs */}
+          {galleryTab === 'interior' && (
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+              {interiorGalleryTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setInteriorTab(tab.key)}
+                  className={`px-5 py-2.5 border uppercase tracking-[0.2em] font-semibold transition-all ${
+                    interiorTab === tab.key
+                      ? 'bg-[#a67c52] border-[#a67c52] text-white'
+                      : 'border-white/15 text-white/50 hover:text-white hover:border-white/40'
+                  }`}
+                  style={{ fontSize: "clamp(0.5625rem, 0.5rem + 0.2vw, 0.625rem)" }}
+                >
+                  {t(tab.labelKey)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Marquee slider */}
@@ -633,11 +702,11 @@ export const HomePage: React.FC<HomePageProps> = ({
             onMouseEnter={() => { galleryPausedRef.current = true; }}
             onMouseLeave={() => { galleryPausedRef.current = false; }}
           >
-            {[gallery1, gallery2, gallery3, gallery4, gallery5, gallery6, gallery7, gallery8, gallery9, gallery1, gallery2, gallery3, gallery4, gallery5, gallery6, gallery7, gallery8, gallery9].map((img, idx) => (
+            {[...activeGalleryImages, ...activeGalleryImages].map((img, idx) => (
               <div
                 key={idx}
-                onClick={() => setSelectedGalleryImage(img)}
-                className="w-[320px] md:w-[400px] aspect-[1365/1700] flex-shrink-0 cursor-pointer overflow-hidden group border border-white/10"
+                onClick={() => setSelectedGalleryIndex(idx % activeGalleryImages.length)}
+                className="w-[340px] md:w-[440px] aspect-[16/10] flex-shrink-0 cursor-pointer overflow-hidden group border border-white/10"
               >
                 <img
                   src={img}
@@ -650,7 +719,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* Signature Amenities Section */}
+      {/* FAQ Section */}
       <section className="py-24 px-6 md:px-16 bg-[#f5f3f3]">
         <div className="max-w-[1280px] mx-auto">
           <div className="mb-16 text-center">
@@ -658,24 +727,23 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-2"
               style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
             >
-              {t('home.amenitiesLabel')}
+              {t('home.faqLabel')}
             </span>
             <h2
-              className="font-serif-headline text-[#1b1c1c]"
+              className="font-serif-headline text-[#1b1c1c] whitespace-nowrap"
               style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
             >
-              {t('home.amenitiesSectionTitle')}
+              {t('home.faqTitle').split(/(?= (?:ENRE RESIDENCE|إنري ريزيدنس)$)/).map((part, i, arr) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < arr.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </h2>
-            <p
-              className="text-[#5f5e5e] mt-4 max-w-2xl mx-auto leading-relaxed"
-              style={{ fontSize: "clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)" }}
-            >
-              {t('home.amenitiesSectionDesc')}
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-0">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n, idx) => { const nameKey = `home.amenity${n}Name`; const descKey = `home.amenity${n}Desc`; return (
+          <div className="grid grid-cols-1 max-w-3xl mx-auto gap-y-0">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((n, idx) => { const nameKey = `home.faq${n}Question`; const descKey = `home.faq${n}Answer`; return (
               <div
                 key={idx}
                 className="border-b border-[#d4c4b7]/50"
@@ -708,11 +776,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </button>
                 <div
                   className={`overflow-hidden transition-all duration-300 ${
-                    openFaq === idx ? "max-h-40 pb-5" : "max-h-0"
+                    openFaq === idx ? "max-h-[40rem] pb-5" : "max-h-0"
                   }`}
                 >
                   <p
-                    className="text-[#5f5e5e] leading-relaxed pl-12"
+                    className="text-[#5f5e5e] leading-relaxed pl-12 whitespace-pre-line"
                     style={{ fontSize: "clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)" }}
                   >
                     {t(descKey)}
@@ -994,26 +1062,56 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* Gallery Lightbox Modal */}
-      {selectedGalleryImage && (
+      {selectedGalleryIndex !== null && activeGalleryImages.length > 0 && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 animate-in fade-in"
-          onClick={() => setSelectedGalleryImage(null)}
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 md:p-8 animate-in fade-in"
+          onClick={() => setSelectedGalleryIndex(null)}
         >
-          <div className="relative max-w-5xl max-h-[90vh]">
+          <button
+            onClick={() => setSelectedGalleryIndex(null)}
+            className="absolute top-4 right-4 md:top-6 md:right-6 z-10 text-white/80 hover:text-[#a67c52] uppercase tracking-widest font-semibold"
+            style={{
+              fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
+            }}
+          >
+            {t('home.closeLightbox')}
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleGalleryPrev();
+            }}
+            className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
+            aria-label="Previous image"
+          >
+            &#8592;
+          </button>
+
+          <div
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
-              src={selectedGalleryImage}
-              alt={t('home.galleryTitle')}
-              className="max-h-[85vh] w-auto mx-auto object-contain"
+              src={activeGalleryImages[selectedGalleryIndex]}
+              alt={`${t('home.galleryTitle')} ${selectedGalleryIndex + 1}`}
+              className="max-h-[88vh] md:max-h-[92vh] max-w-[88vw] md:max-w-[94vw] w-auto h-auto mx-auto object-contain"
             />
-            <button
-              onClick={() => setSelectedGalleryImage(null)}
-              className="absolute -top-10 right-0 text-white hover:text-[#a67c52] uppercase tracking-widest font-semibold"
-              style={{
-                fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-              }}
-            >
-              {t('home.closeLightbox')}
-            </button>
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleGalleryNext();
+            }}
+            className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
+            aria-label="Next image"
+          >
+            &#8594;
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-widest">
+            {selectedGalleryIndex + 1} / {activeGalleryImages.length}
           </div>
         </div>
       )}

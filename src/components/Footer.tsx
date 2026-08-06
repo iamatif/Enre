@@ -49,7 +49,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenRegisterModal }) => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#a67c52]" />
-                <a href="tel:+971557969234" className="hover:text-[#a67c52] transition-colors">
+                <a href="tel:+971521642020" className="hover:text-[#a67c52] transition-colors">
                   {t('footer.phone')}
                 </a>
               </div>

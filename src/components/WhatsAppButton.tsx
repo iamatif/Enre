@@ -3,7 +3,7 @@ import React from 'react';
 export const WhatsAppButton: React.FC = () => {
   return (
     <a
-      href="https://wa.me/971557969234"
+      href="https://wa.me/971521642020"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

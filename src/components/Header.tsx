@@ -185,7 +185,7 @@ export const Header: React.FC<HeaderProps> = ({
               {t('nav.registerNow')}
             </button>
             <a
-              href="tel:+971557969234"
+              href="tel:+971521642020"
               className="flex items-center justify-center gap-2 border border-white text-white py-2.5 font-semibold uppercase tracking-widest text-center hover:bg-white/10" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
             >
               <PhoneCall className="w-4 h-4" />

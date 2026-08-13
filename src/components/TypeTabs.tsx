@@ -3,11 +3,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DownloadModal } from "./DownloadModal";
 import { useLanguage } from "../context/LanguageContext";
 import brochurePdf from "../../assets/Enre Residence by Imtiaz-Brochure.pdf";
-import typeTabLogo1 from "../../assets/about-logo/logo 1.svg";
-import typeTabLogo2 from "../../assets/about-logo/The Brooks_0.svg";
-import typeTabLogo3 from "../../assets/about-logo/The Greens_0.svg";
-import typeTabLogo4 from "../../assets/about-logo/The Grove_0.svg";
-import typeTabLogo5 from "../../assets/about-logo/The Willow Property Logo.svg";
+import typeTabLogo1 from "../../assets/about-Logo/logo 1.svg";
+import typeTabLogo2 from "../../assets/about-Logo/The Brooks_0.svg";
+import typeTabLogo3 from "../../assets/about-Logo/The Greens_0.svg";
+import typeTabLogo4 from "../../assets/about-Logo/The Grove_0.svg";
+import typeTabLogo5 from "../../assets/about-Logo/The Willow Property Logo.svg";
 
 import willowGallery1 from "../../assets/the-willow/Gallery-images--DESK2.jpg.webp";
 import willowGallery2 from "../../assets/the-willow/Gallery-images--DESK3.jpg.webp";

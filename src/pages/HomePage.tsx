@@ -1,14 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Hero } from "../components/Hero";
+import { DownloadModal } from "../components/DownloadModal";
+import TypeTabs from "../components/TypeTabs";
+import AmenitiesHighlights from "../components/AmenitiesHighlights";
 import { useLanguage } from "../context/LanguageContext";
-import { sendLeadEmail } from "../services/emailjs";
+import { sendLeadEmail } from "../services/leadService";
 import {
-  ArrowRight,
   Phone,
   Mail,
-  ChevronRight,
-  CheckCircle2,
-  Shield,
+  Plus,
   Check,
   Calendar,
   Dumbbell,
@@ -20,8 +20,14 @@ import {
 import { Link } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import keyHighlightsBg from "../../assets/key0highlights.webp";
-import paymentPlanPdf from "../../assets/IMTIAZ_Enre Residence-Payment plan.pdf";
+import brochurePdf from "../../assets/Enre Residence by Imtiaz-Brochure.pdf";
+const aboutImages = Object.values(
+  import.meta.glob('../../assets/about-gallery/*.{png,webp,jpg,jpeg}', {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  })
+) as string[];
 const collectImages = (glob: Record<string, string>): string[] =>
   Object.keys(glob)
     .sort()
@@ -29,6 +35,12 @@ const collectImages = (glob: Record<string, string>): string[] =>
 
 const galleryExterior = collectImages(
   import.meta.glob("/assets/gallery/optimized/exterior/*.webp", {
+    eager: true,
+    import: "default",
+  })
+);
+const galleryHeroBg = collectImages(
+  import.meta.glob("/assets/hero-bg/*.{jpg,jpeg,png,webp}", {
     eager: true,
     import: "default",
   })
@@ -58,6 +70,14 @@ const galleryLobby = collectImages(
   })
 );
 
+const faqTabs = [
+  { prefix: "G", titleKey: "home.faqTab3Title", counts: [1, 2, 3, 4, 5] },
+  { prefix: "W", titleKey: "home.faqTab4Title", counts: [1, 2, 3, 4, 5] },
+  { prefix: "GR", titleKey: "home.faqTab5Title", counts: [1, 2, 3, 4, 5] },
+  { prefix: "B", titleKey: "home.faqTab6Title", counts: [1, 2, 3, 4, 5] },
+  { prefix: "WD", titleKey: "home.faqTab7Title", counts: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+];
+
 interface HomePageProps {
   onOpenRegisterModal: () => void;
 }
@@ -68,9 +88,25 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [highlightSlide, setHighlightSlide] = useState(0);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeFaqTab, setActiveFaqTab] = useState(0);
   const [phoneValue, setPhoneValue] = useState<string | undefined>(undefined);
+  const [download, setDownload] = useState<{
+    fileUrl: string;
+    fileName: string;
+    title: string;
+    subtitle: string;
+  } | null>(null);
   const { t, lang } = useLanguage();
+  const [aboutSlide, setAboutSlide] = useState(0);
+
+  useEffect(() => {
+    if (aboutImages.length <= 1) return;
+    const id = setInterval(() => {
+      setAboutSlide((prev) => (prev + 1) % aboutImages.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   const formRef = useRef<HTMLFormElement>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -96,7 +132,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   const activeGalleryImages =
-    galleryTab === 'exterior' ? galleryExterior : galleryImagesByInterior[interiorTab];
+    galleryTab === 'exterior' ? [...galleryExterior, ...galleryHeroBg] : galleryImagesByInterior[interiorTab];
 
   const scrollToContact = () => {
     const el = document.getElementById('contact');
@@ -277,42 +313,78 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* About Project Section */}
       <section id="about" className="py-24 md:py-36 px-6 md:px-16 bg-[#f5f3f3]">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <span
-            className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-2"
-            style={{
-              fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-            }}
-          >
-            {t('home.aboutProjectLabel')}
-          </span>
-          <h2
-            className="font-serif-headline text-[#79542e]"
-            style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
-          >
-            {t('home.aboutProjectTitle')}
-          </h2>
-          <div
-            className="space-y-6 text-[#5f5e5e] font-normal leading-relaxed"
-            style={{ fontSize: "clamp(1rem, 0.875rem + 0.5vw, 1.125rem)" }}
-          >
-            <p>{t('home.aboutProjectDesc1')}</p>
-            <p>{t('home.aboutProjectDesc2')}</p>
+        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left: Image Slider */}
+          <div className="relative">
+            <div className="relative overflow-hidden">
+              <div className="relative w-full" style={{ minHeight: "24rem", aspectRatio: "928/796" }}>
+                {aboutImages.map((img, i) => (
+                  <div
+                    key={img}
+                    className="absolute inset-0 w-full h-full bg-cover bg-center transition-opacity ease-in-out"
+                    style={{
+                      backgroundImage: `url('${img}')`,
+                      opacity: i === aboutSlide ? 1 : 0,
+                      transitionDuration: "2000ms",
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="absolute top-0 left-0 w-24 h-24 border-t border-l border-[#a67c52]/60 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-24 h-24 border-b border-r border-[#a67c52]/60 pointer-events-none" />
+            </div>
           </div>
-          <div className="pt-8">
-            <a
-              href={paymentPlanPdf}
-              download="Enre-Residence-Payment-Plan.pdf"
-              className="inline-block bg-[#79542e] text-white px-10 py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95"
-              style={{
-                fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-              }}
+
+          {/* Right: Heading + Description + CTA */}
+          <div className="space-y-6">
+            <div>
+              <span
+                className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-3"
+                style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+              >
+                {t('home.aboutProjectLabel')}
+              </span>
+              <h2
+                className="font-serif-headline text-[#1b1c1c] leading-tight"
+                style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.5rem)" }}
+              >
+                {t('home.aboutProjectTitle')}
+              </h2>
+              <div className="w-14 h-0.5 bg-[#79542e] mt-5" />
+            </div>
+
+            <div
+              className="space-y-5 text-[#5f5e5e] font-normal leading-relaxed"
+              style={{ fontSize: "clamp(0.875rem, 0.8125rem + 0.25vw, 1rem)" }}
             >
-              {t('hero.downloadPaymentPlan')}
-            </a>
+              <p className="whitespace-pre-line">{t('home.aboutProjectDesc1')}</p>
+              <p className="whitespace-pre-line">{t('home.aboutProjectDesc2')}</p>
+            </div>
+
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={() =>
+                  setDownload({
+                    fileUrl: brochurePdf,
+                    fileName: 'Sobha-Sanctuary-Brochure.pdf',
+                    title: t('download.brochureTitle'),
+                    subtitle: t('download.brochureSubtitle'),
+                  })
+                }
+                className="inline-flex items-center gap-3 bg-[#79542e] text-white px-10 py-4 font-semibold hover:brightness-110 transition-all uppercase tracking-[0.2em] shadow-xl active:scale-95 cursor-pointer"
+                style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+              >
+                <span>{t('hero.downloadBrochure')}</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
+
+      <TypeTabs />
+
+      <AmenitiesHighlights />
 
       {/* Flexible Payment Plan Section */}
       <section className="py-20 md:py-24 px-6 md:px-16">
@@ -324,12 +396,12 @@ export const HomePage: React.FC<HomePageProps> = ({
             >
               {t('home.paymentPlanSectionLabel')}
             </span>
-            <h3
+            <h2
               className="font-serif-headline text-[#1b1c1c]"
               style={{ fontSize: "clamp(1.5rem, 1.125rem + 1.5vw, 2rem)" }}
             >
               {t('home.paymentPlanHeading')}
-            </h3>
+            </h2>
             <p
               className="text-[#5f5e5e] mt-3 max-w-2xl mx-auto leading-relaxed"
               style={{ fontSize: "clamp(0.875rem, 0.8125rem + 0.25vw, 1rem)" }}
@@ -372,159 +444,6 @@ export const HomePage: React.FC<HomePageProps> = ({
               >
                 {t('home.paymentPlanCta')}
               </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Key Highlights Section */}
-      <section className="relative py-28 overflow-hidden bg-black text-white">
-        <div className="absolute inset-0 z-0">
-          <img
-            src={keyHighlightsBg}
-            alt={t('home.highlightsTitle')}
-            className="w-full h-full object-cover opacity-40"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/50" />
-        </div>
-
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-16">
-          <div className="text-center mb-16">
-            <span
-              className="font-semibold text-white/70 uppercase tracking-[0.25em] block mb-2"
-              style={{
-                fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-              }}
-            >
-              {t('home.collectionLabel')}
-            </span>
-            <h2
-              className="font-serif-headline text-white"
-              style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
-            >
-              {t('home.highlightsTitle')}
-            </h2>
-            <div className="w-20 h-0.5 bg-[#a67c52] mx-auto mt-6" />
-          </div>
-
-          {/* Desktop grid */}
-          <div className="hidden lg:grid grid-cols-5 gap-x-8 gap-y-12 text-center">
-            {highlights.map((item, idx) => (
-              <div key={idx} className="flex flex-col items-center">
-                <div className="w-16 h-16 mb-4 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-[#c49a6e]">
-                  <item.icon className="w-7 h-7" />
-                </div>
-                <p
-                  className="text-white font-semibold uppercase tracking-widest mb-2"
-                  style={{ fontSize: "clamp(0.75rem, 0.6875rem + 0.25vw, 0.875rem)" }}
-                >
-                  {t(item.titleKey)}
-                </p>
-                <p
-                  className="text-white/70 leading-relaxed"
-                  style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
-                >
-                  {t(item.descKey)}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile/Tablet slider */}
-              <div className="lg:hidden select-none">
-            <div className="relative overflow-hidden" dir="ltr">
-              <div
-                ref={trackRef}
-                className="flex highlights-track cursor-grab active:cursor-grabbing"
-                style={{ '--hl-slide': highlightSlide } as React.CSSProperties}
-                onMouseDown={(e) => handleDragStart(e.clientX)}
-                onMouseMove={(e) => handleDragMove(e.clientX)}
-                onMouseUp={handleDragEnd}
-                onMouseLeave={handleDragEnd}
-                onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-                onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
-                onTouchEnd={handleDragEnd}
-              >
-                {highlights.map((item, idx) => (
-                  <div key={idx} className="w-full md:w-1/2 flex-shrink-0 px-6 md:px-8">
-                    <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 mb-4 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-[#c49a6e]">
-                        <item.icon className="w-7 h-7" />
-                      </div>
-                      <p
-                        className="text-white font-semibold uppercase tracking-widest mb-2 text-center"
-                        style={{ fontSize: "clamp(0.75rem, 0.6875rem + 0.25vw, 0.875rem)" }}
-                      >
-                        {t(item.titleKey)}
-                      </p>
-                      <p
-                        className="text-white/70 leading-relaxed text-center"
-                        style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
-                      >
-                        {t(item.descKey)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation arrows - tablet+ only */}
-            <div className="hidden md:flex items-center justify-center gap-4 mt-10">
-              <button
-                onClick={() => setHighlightSlide(prev => {
-                  const max = window.innerWidth < 768 ? highlights.length - 1 : Math.ceil(highlights.length / 2) - 1;
-                  return prev === 0 ? max : prev - 1;
-                })}
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/25 transition-all"
-                aria-label="Previous highlights"
-              >
-                &#8592;
-              </button>
-              <button
-                onClick={() => setHighlightSlide(prev => {
-                  const max = window.innerWidth < 768 ? highlights.length - 1 : Math.ceil(highlights.length / 2) - 1;
-                  return prev >= max ? 0 : prev + 1;
-                })}
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/25 transition-all"
-                aria-label="Next highlights"
-              >
-                &#8594;
-              </button>
-            </div>
-
-            {/* Dots */}
-            <div className="flex items-center justify-center gap-2 mt-8">
-              {/* Mobile dots */}
-              <div className="flex md:hidden gap-2">
-                {highlights.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setHighlightSlide(idx)}
-                    className="p-2 rounded-full transition-all"
-                    aria-label={`Go to slide ${idx + 1}`}
-                  >
-                    <span className={`block w-2 h-2 rounded-full transition-all ${
-                      highlightSlide === idx ? "bg-white w-4" : "bg-white/30"
-                    }`} />
-                  </button>
-                ))}
-              </div>
-              {/* Tablet dots */}
-              <div className="hidden md:flex gap-2">
-                {Array.from({ length: Math.ceil(highlights.length / 2) }).map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setHighlightSlide(idx * 2)}
-                    className="p-2 rounded-full transition-all"
-                    aria-label={`Go to slide group ${idx + 1}`}
-                  >
-                    <span className={`block w-2 h-2 rounded-full transition-all ${
-                      Math.floor(highlightSlide / 2) === idx ? "bg-white w-4" : "bg-white/30"
-                    }`} />
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -706,11 +625,13 @@ export const HomePage: React.FC<HomePageProps> = ({
               <div
                 key={idx}
                 onClick={() => setSelectedGalleryIndex(idx % activeGalleryImages.length)}
-                className="w-[340px] md:w-[440px] aspect-[16/10] flex-shrink-0 cursor-pointer overflow-hidden group border border-white/10"
+                className="w-[420px] md:w-[560px] lg:w-[680px] aspect-[4/3] flex-shrink-0 cursor-pointer overflow-hidden group border border-white/10"
               >
                 <img
                   src={img}
                   alt={`${t('home.galleryTitle')} ${idx + 1}`}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
@@ -722,72 +643,108 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* FAQ Section */}
       <section className="py-24 px-6 md:px-16 bg-[#f5f3f3]">
         <div className="max-w-[1280px] mx-auto">
-          <div className="mb-16 text-center">
+          <div className="text-center mb-12">
             <span
-              className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-2"
+              className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-3"
               style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
             >
               {t('home.faqLabel')}
             </span>
             <h2
-              className="font-serif-headline text-[#1b1c1c] whitespace-nowrap"
-              style={{ fontSize: "clamp(1.75rem, 1.25rem + 2vw, 2.25rem)" }}
+              className="font-serif-headline text-[#1b1c1c] faq-heading leading-tight max-w-full"
+              style={{ fontSize: "clamp(1.375rem, 1rem + 2.5vw, 2.5rem)" }}
             >
-              {t('home.faqTitle').split(/(?= (?:ENRE RESIDENCE|إنري ريزيدنس)$)/).map((part, i, arr) => (
-                <React.Fragment key={i}>
-                  {part}
-                  {i < arr.length - 1 && <br />}
-                </React.Fragment>
-              ))}
+              {t('home.faqTitle')}
             </h2>
+            <div className="w-14 h-0.5 bg-[#79542e] mx-auto mt-5" />
           </div>
 
-          <div className="grid grid-cols-1 max-w-3xl mx-auto gap-y-0">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n, idx) => { const nameKey = `home.faq${n}Question`; const descKey = `home.faq${n}Answer`; return (
-              <div
-                key={idx}
-                className="border-b border-[#d4c4b7]/50"
-              >
+          <div className="flex justify-center mb-12">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-2.5 sm:bg-white sm:border sm:border-[#d4c4b7]/40 sm:rounded-xl sm:p-1.5 sm:shadow-sm w-full sm:w-auto">
+              {faqTabs.map((tab, ti) => (
                 <button
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between py-5 text-left group"
+                  key={tab.prefix}
+                  onClick={() => {
+                    setActiveFaqTab(ti);
+                    setOpenFaq(ti * 100);
+                  }}
+                  className={`px-6 py-3.5 font-semibold uppercase tracking-widest rounded-lg transition-all duration-300 ${
+                    activeFaqTab === ti
+                      ? 'bg-[#79542e] text-white shadow-md'
+                      : 'bg-[#efe7db] text-[#5f5e5e] hover:text-[#79542e] hover:bg-[#f5e9d8]'
+                  }`}
+                  style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
                 >
-                  <div className="flex items-center gap-4">
-                    <span
-                      className="font-serif-headline text-[#79542e] font-bold"
-                      style={{ fontSize: "clamp(1rem, 0.875rem + 0.5vw, 1.125rem)" }}
-                    >
-                      {String(idx + 1).padStart(2, "0")}
-                    </span>
-                    <h3
-                      className="font-serif-headline text-[#1b1c1c] group-hover:text-[#79542e] transition-colors"
-                      style={{ fontSize: "clamp(1.125rem, 0.9375rem + 0.75vw, 1.25rem)" }}
-                    >
-                      {t(nameKey)}
-                    </h3>
-                  </div>
-                  <span
-                    className={`text-[#79542e] text-2xl font-light transition-transform duration-300 ${
-                      openFaq === idx ? "rotate-45" : ""
-                    }`}
-                  >
-                    +
-                  </span>
+                  {t(tab.titleKey)}
                 </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto flex flex-col gap-4">
+            {faqTabs[activeFaqTab].counts.map((n, idx) => {
+              const prefix = faqTabs[activeFaqTab].prefix;
+              const nameKey = `home.faq${prefix}${n}Question`;
+              const descKey = `home.faq${prefix}${n}Answer`;
+              const openId = activeFaqTab * 100 + idx;
+              return (
                 <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    openFaq === idx ? "max-h-[40rem] pb-5" : "max-h-0"
+                  key={openId}
+                  className={`rounded-xl overflow-hidden transition-all duration-300 ${
+                    openFaq === openId
+                      ? 'bg-white max-md:bg-[#f5e9d8] border border-[#79542e] shadow-lg'
+                      : 'bg-white border border-[#d4c4b7]/40 hover:border-[#a67c52]/60 hover:shadow-md'
                   }`}
                 >
-                  <p
-                    className="text-[#5f5e5e] leading-relaxed pl-12 whitespace-pre-line"
-                    style={{ fontSize: "clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)" }}
+                  <h3 className="m-0">
+                    <button
+                      onClick={() => setOpenFaq(openFaq === openId ? null : openId)}
+                      aria-expanded={openFaq === openId}
+                      className="w-full flex items-center justify-between gap-4 py-5 px-6 text-left group"
+                    >
+                      <span className="flex items-center gap-4">
+                        <span
+                          className="font-serif-headline text-[#79542e] font-bold"
+                          style={{ fontSize: "clamp(0.875rem, 0.75rem + 0.4vw, 1.125rem)" }}
+                        >
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <span
+                          className="font-serif-headline text-[#1b1c1c] group-hover:text-[#79542e] transition-colors leading-snug faq-question"
+                          style={{ fontSize: "clamp(1.0625rem, 0.9375rem + 0.5vw, 1.25rem)" }}
+                        >
+                          {t(nameKey)}
+                        </span>
+                      </span>
+                      <span
+                        className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          openFaq === openId
+                            ? 'bg-[#79542e] text-white rotate-45'
+                            : 'bg-[#f5e9d8] text-[#79542e]'
+                        }`}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </span>
+                    </button>
+                  </h3>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      openFaq === openId ? "max-h-[60rem]" : "max-h-0"
+                    }`}
                   >
-                    {t(descKey)}
-                  </p>
+                    <div className="px-6 pb-6">
+                      <div className="h-px bg-[#d4c4b7]/40 mb-4 ms-9" />
+                      <p
+                        className="text-[#5f5e5e] leading-relaxed ms-9 whitespace-pre-line"
+                        style={{ fontSize: "clamp(0.8125rem, 0.75rem + 0.2vw, 0.875rem)" }}
+                      >
+                        {t(descKey)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ); })}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -798,7 +755,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         className="py-24 md:py-32 px-6 md:px-16 bg-[#fbf9f8] border-t border-[#e4e2e2]"
       >
         <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          <div className="space-y-6">
+          <div className="lg:sticky lg:top-28 space-y-6">
             <span
               className="font-semibold text-[#79542e] uppercase tracking-[0.25em] block mb-2"
               style={{
@@ -821,6 +778,30 @@ export const HomePage: React.FC<HomePageProps> = ({
             >
               {t('home.contactDesc')}
             </p>
+
+            <div className="relative bg-[#1b1c1c] p-8 shadow-xl overflow-hidden">
+              <div className="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#c9a86a]/70 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#c9a86a]/70 pointer-events-none" />
+              <span
+                className="font-semibold text-[#c9a86a] uppercase tracking-[0.25em] block"
+                style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+              >
+                Starting Prices
+              </span>
+              <div className="w-10 h-px bg-[#c9a86a] my-4" />
+              <p
+                className="text-white font-bold leading-snug"
+                style={{ fontSize: "clamp(0.9375rem, 0.875rem + 0.25vw, 1.125rem)" }}
+              >
+                AED 9.32 M* | INR 23.9 CR* | USD 2.55 M* | EUR 2.28 M* | GBP 1.96 M*
+              </p>
+              <p
+                className="text-white/55 mt-3 leading-relaxed"
+                style={{ fontSize: "clamp(0.625rem, 0.5625rem + 0.2vw, 0.6875rem)" }}
+              >
+                Subject to inventory availability* | The global prices may vary as per the exchange rate*
+              </p>
+            </div>
 
             <div className="space-y-6 pt-4">
               <div className="flex gap-4 items-center">
@@ -1095,6 +1076,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <img
               src={activeGalleryImages[selectedGalleryIndex]}
               alt={`${t('home.galleryTitle')} ${selectedGalleryIndex + 1}`}
+              decoding="async"
               className="max-h-[88vh] md:max-h-[92vh] max-w-[88vw] md:max-w-[94vw] w-auto h-auto mx-auto object-contain"
             />
           </div>
@@ -1115,6 +1097,15 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
       )}
+
+      <DownloadModal
+        open={download !== null}
+        onClose={() => setDownload(null)}
+        title={download?.title ?? ''}
+        subtitle={download?.subtitle ?? ''}
+        fileUrl={download?.fileUrl ?? ''}
+        fileName={download?.fileName ?? ''}
+      />
     </div>
   );
 };

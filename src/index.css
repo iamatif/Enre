@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes floorFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes floorFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(1.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marqueeLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes marqueeRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
 @layer base {
   :root {
     --font-serif: 'EB Garamond', serif;
@@ -33,6 +63,33 @@
   [dir="rtl"] .font-serif-headline {
     font-family: var(--font-serif-arabic) !important;
     text-transform: uppercase !important;
+  }
+
+  h3.faq-question {
+    text-transform: capitalize !important;
+  }
+
+  h1.hero-heading {
+    font-family: var(--font-serif) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+  }
+
+  [dir="rtl"] h1.hero-heading {
+    font-family: var(--font-serif-arabic) !important;
+    text-transform: capitalize !important;
+  }
+
+  h2.faq-heading {
+    text-transform: capitalize !important;
+  }
+
+  [dir="rtl"] h3.faq-question {
+    text-transform: capitalize !important;
+  }
+
+  [dir="rtl"] h2.faq-heading {
+    text-transform: capitalize !important;
   }
 }
 
@@ -76,6 +133,56 @@
 .glass-nav {
   background: rgba(251, 249, 248, 0.92);
   backdrop-filter: blur(12px);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.popup-phone .PhoneInput {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.popup-phone .PhoneInputInput {
+  flex: 1;
+  background: #1b1c1c;
+  border: 1px solid #3a3b3b;
+  outline: none;
+  padding: 0.625rem 0.75rem;
+  color: #ffffff;
+  min-width: 0;
+}
+
+.popup-phone .PhoneInputInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.popup-phone .PhoneInputInput:focus {
+  border-color: #c9a86a;
+}
+
+.popup-phone .PhoneInputCountry {
+  background: #1b1c1c;
+  border: 1px solid #3a3b3b;
+  padding: 0.625rem 0.5rem;
+  margin-right: 0;
+  color: #ffffff;
+}
+
+.popup-phone .PhoneInputCountrySelectArrow {
+  color: #ffffff;
+}
+
+.popup-phone .PhoneInputCountryIcon {
+  box-shadow: none;
+  background: transparent;
 }
 
 .font-body {

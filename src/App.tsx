@@ -6,6 +6,7 @@ import { HomePage } from './pages/HomePage';
 import { LanguageProvider } from './context/LanguageContext';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { WhatsAppButton } from './components/WhatsAppButton';
+import { ScrollPopup } from './components/ScrollPopup';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -43,7 +44,7 @@ function AppInner() {
           <Route path="/ar" element={<HomePage onOpenRegisterModal={scrollToContact} />} />
         </Routes>
       </main>
-      <Footer onOpenRegisterModal={scrollToContact} />
+      <Footer />
     </>
   );
 }
@@ -57,6 +58,7 @@ export default function App() {
           <AppInner />
           <ScrollToTopButton />
           <WhatsAppButton />
+          <ScrollPopup />
         </div>
       </LanguageProvider>
     </BrowserRouter>

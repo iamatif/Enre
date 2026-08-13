@@ -1,6 +1,6 @@
-# The Canopies at Yas Point / Enre Residence — Luxury Real Estate Landing Page
+# Sobha Sanctuary — Luxury Real Estate Landing Page
 
-A bilingual (English / Arabic) luxury real estate landing page for **The Canopies at Yas Point** on Yas Island, Abu Dhabi, built as a Vite + React + TypeScript single-page application with Tailwind CSS.
+A bilingual (English / Arabic) luxury real estate landing page for **Sobha Sanctuary** in Dubailand, Dubai, built as a Vite + React + TypeScript single-page application with Tailwind CSS.
 
 ## Tech Stack
 

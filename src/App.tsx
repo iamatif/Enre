@@ -7,6 +7,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { ScrollToTopButton } from './components/ScrollToTopButton';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { ScrollPopup } from './components/ScrollPopup';
+import { smoothScrollToElement } from './utils/scroll';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -26,7 +27,7 @@ function useScrollToContact() {
       navigate(`${prefix}/#contact`);
     } else {
       setTimeout(() => {
-        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+        smoothScrollToElement(document.getElementById('contact'), 72);
       }, 100);
     }
   };

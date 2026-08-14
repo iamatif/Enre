@@ -5,6 +5,7 @@ import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import popupImage from "../../assets/the-grove/VILLA - T5A_Closeup 02_2.jpg.webp";
 import { X } from "lucide-react";
+import { useSlideModal } from "../utils/useSlideModal";
 
 interface DownloadModalProps {
   open: boolean;
@@ -27,8 +28,9 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   const [phoneValue, setPhoneValue] = useState<string | undefined>();
   const [submitting, setSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const { render, translate, transition, overlayVisible } = useSlideModal(open);
 
-  if (!open) return null;
+  if (!render) return null;
 
   const startDownload = () => {
     const a = document.createElement('a');
@@ -72,50 +74,54 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 md:p-8 animate-in fade-in"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[80]" aria-modal="true" role="dialog">
       <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-4xl bg-[#1b1c1c] shadow-2xl overflow-hidden animate-in zoom-in"
-        dir="ltr"
-      >
-        <button
-          onClick={onClose}
-          aria-label={t('popup.close')}
-          className="absolute top-3 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/25 transition-colors"
+        className={`absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-[550ms] ${
+          overlayVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+        onClick={onClose}
+      />
+      <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`relative w-full max-w-4xl bg-[#1b1c1c] shadow-2xl overflow-y-auto transition-transform will-change-transform ${transition} ${translate}`}
+          dir="ltr"
         >
-          <X className="w-4 h-4" />
-        </button>
+          <button
+            onClick={onClose}
+            aria-label={t('popup.close')}
+            className="absolute top-3 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/25 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          <div className="hidden md:block relative min-h-[520px]">
-            <img
-              src={popupImage}
-              alt="Sobha Sanctuary private residence"
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6">
-              <span
-                className="font-semibold text-[#c9a86a] uppercase tracking-[0.25em] block mb-2"
-                style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
-              >
-                {t('popup.badge')}
-              </span>
-              <p
-                className="text-white font-serif-headline leading-snug"
-                style={{ fontSize: "clamp(1.5rem, 1.125rem + 1vw, 2rem)" }}
-              >
-                {title}
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="hidden md:block relative min-h-[520px]">
+              <img
+                src={popupImage}
+                alt="Sobha Sanctuary private residence"
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <span
+                  className="font-semibold text-[#c9a86a] uppercase tracking-[0.25em] block mb-2"
+                  style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
+                >
+                  {t('popup.badge')}
+                </span>
+                <p
+                  className="text-white font-serif-headline leading-snug"
+                  style={{ fontSize: "clamp(1.5rem, 1.125rem + 1vw, 2rem)" }}
+                >
+                  {title}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="p-6 md:p-10">
+            <div className="p-6 md:p-10">
             <span
               className="font-semibold text-[#c9a86a] uppercase tracking-[0.25em] block mb-2"
               style={{ fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)" }}
@@ -243,6 +249,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
               {submitting ? t('popup.submitting') : t('download.submit')}
             </button>
           </form>
+          </div>
         </div>
         </div>
       </div>

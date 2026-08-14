@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { smoothScrollToElement } from '../utils/scroll';
 import { DownloadModal } from './DownloadModal';
 import brochurePdf from '../../assets/Enre Residence by Imtiaz-Brochure.pdf';
 import floorPlanPdf from '../../assets/Enre Residence by Imtiaz - Floor Plan .pdf';
@@ -44,10 +45,7 @@ export const Hero: React.FC<HeroProps> = () => {
   }, []);
 
   const scrollToAbout = () => {
-    const el = document.getElementById('about');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    smoothScrollToElement(document.getElementById('about'), 72);
   };
 
   return (

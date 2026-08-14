@@ -8,8 +8,6 @@ interface HeaderProps {
   onOpenRegisterModal: () => void;
 }
 
-const CALENDLY_URL = '#';
-
 export const Header: React.FC<HeaderProps> = ({
   onOpenRegisterModal,
 }) => {
@@ -184,14 +182,13 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Book Appointment CTA Button */}
-          <a
-            href={CALENDLY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:block border border-white bg-transparent text-white px-6 py-2.5 font-semibold hover:bg-white hover:text-black transition-all uppercase tracking-[0.15em] shadow-sm active:opacity-90" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
+          <button
+            type="button"
+            onClick={onOpenRegisterModal}
+            className="hidden sm:block border border-white bg-transparent text-white px-6 py-2.5 font-semibold hover:bg-white hover:text-black transition-all uppercase tracking-[0.15em] shadow-sm active:opacity-90 cursor-pointer" style={{ fontSize: 'clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)' }}
           >
             {t('nav.bookAppointment')}
-          </a>
+          </button>
 
           {/* Mobile Menu Button - hidden on homepage */}
           {!isHome && (

@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
+import { smoothScrollToElement } from "../utils/scroll";
+import { useSlideModal } from "../utils/useSlideModal";
 import "react-phone-number-input/style.css";
 import brochurePdf from "../../assets/Enre Residence by Imtiaz-Brochure.pdf";
 const aboutImages = Object.values(
@@ -135,8 +137,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     galleryTab === 'exterior' ? [...galleryExterior, ...galleryHeroBg] : galleryImagesByInterior[interiorTab];
 
   const scrollToContact = () => {
-    const el = document.getElementById('contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    smoothScrollToElement(document.getElementById('contact'), 72);
   };
 
   const paymentPlanSteps = [
@@ -257,6 +258,14 @@ export const HomePage: React.FC<HomePageProps> = ({
   const galleryAnimRef = useRef<number>(0);
   const galleryOffsetRef = useRef(0);
   const galleryPausedRef = useRef(false);
+
+  const lightboxOpen = selectedGalleryIndex !== null && activeGalleryImages.length > 0;
+  const {
+    render: lightboxRender,
+    translate: lightboxTranslate,
+    transition: lightboxTransition,
+    overlayVisible: lightboxOverlay,
+  } = useSlideModal(lightboxOpen);
 
   useEffect(() => {
     const el = galleryRef.current;
@@ -1043,57 +1052,64 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* Gallery Lightbox Modal */}
-      {selectedGalleryIndex !== null && activeGalleryImages.length > 0 && (
-        <div
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 md:p-8 animate-in fade-in"
-          onClick={() => setSelectedGalleryIndex(null)}
-        >
-          <button
-            onClick={() => setSelectedGalleryIndex(null)}
-            className="absolute top-4 right-4 md:top-6 md:right-6 z-10 text-white/80 hover:text-[#a67c52] uppercase tracking-widest font-semibold"
-            style={{
-              fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
-            }}
-          >
-            {t('home.closeLightbox')}
-          </button>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleGalleryPrev();
-            }}
-            className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
-            aria-label="Previous image"
-          >
-            &#8592;
-          </button>
-
+      {lightboxRender && (
+        <div className="fixed inset-0 z-50" aria-modal="true" role="dialog">
           <div
-            className="flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={activeGalleryImages[selectedGalleryIndex]}
-              alt={`${t('home.galleryTitle')} ${selectedGalleryIndex + 1}`}
-              decoding="async"
-              className="max-h-[88vh] md:max-h-[92vh] max-w-[88vw] md:max-w-[94vw] w-auto h-auto mx-auto object-contain"
-            />
-          </div>
+            className={`absolute inset-0 bg-black/95 transition-opacity duration-[550ms] ${
+              lightboxOverlay ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={() => setSelectedGalleryIndex(null)}
+          />
+          <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <div className={`transition-transform will-change-transform ${lightboxTransition} ${lightboxTranslate}`}>
+              <button
+                onClick={() => setSelectedGalleryIndex(null)}
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-10 text-white/80 hover:text-[#a67c52] uppercase tracking-widest font-semibold"
+                style={{
+                  fontSize: "clamp(0.6875rem, 0.625rem + 0.2vw, 0.75rem)",
+                }}
+              >
+                {t('home.closeLightbox')}
+              </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleGalleryNext();
-            }}
-            className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
-            aria-label="Next image"
-          >
-            &#8594;
-          </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleGalleryPrev();
+                }}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
+                aria-label="Previous image"
+              >
+                &#8592;
+              </button>
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-widest">
-            {selectedGalleryIndex + 1} / {activeGalleryImages.length}
+              <div
+                className="flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img
+                  src={activeGalleryImages[selectedGalleryIndex ?? 0]}
+                  alt={`${t('home.galleryTitle')} ${selectedGalleryIndex !== null ? selectedGalleryIndex + 1 : ''}`}
+                  decoding="async"
+                  className="max-h-[88vh] md:max-h-[92vh] max-w-[88vw] md:max-w-[94vw] w-auto h-auto mx-auto object-contain"
+                />
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleGalleryNext();
+                }}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/10 hover:bg-[#a67c52] hover:text-white text-white flex items-center justify-center transition-all border border-white/20"
+                aria-label="Next image"
+              >
+                &#8594;
+              </button>
+
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm tracking-widest">
+                {selectedGalleryIndex !== null ? selectedGalleryIndex + 1 : 0} / {activeGalleryImages.length}
+              </div>
+            </div>
           </div>
         </div>
       )}
